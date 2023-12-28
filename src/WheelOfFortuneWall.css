@@ -1,0 +1,13 @@
+.WheelOfFortuneWall {
+  display: inline-block;
+}
+
+.category_display {
+  font-size: 2em;
+  border-top-color: white;
+  border-top-width: 0.1em;
+  border-bottom-color: white;
+  border-bottom-width: 0.1em;
+  text-align: center;
+  display: block;
+}
