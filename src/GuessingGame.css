@@ -1,0 +1,15 @@
+
+.letterToGuessInput {
+  font-size: 4em;
+  text-align: center;
+  border: none;
+  border-bottom: solid 3px gray;
+  color: gray;
+  width: 20rem;
+}
+
+.letterToGuessInput:focus-visible {
+  border-bottom-color: black;
+  color: black;
+  outline: none;
+}

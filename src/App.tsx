@@ -1,21 +1,27 @@
 import React from 'react';
 import './App.css';
 import InfoGather from './InfoGather';
-import WheelOfFortuneWall from './WheelOfFortuneWall';
+import GuessingGame from './GuessingGame'
 
 function App() {
   const [category, setCategory] = React.useState("");
   const [phrase, setPhrase] = React.useState("");
 
-  function onChange(cat: string, p: string) {
+  const [hasGatheredClueInfo, setHasGatheredClueInfo] = React.useState(false);
+
+  function onInfoGatherSubmit(cat: string, p: string) {
     setCategory(cat.toUpperCase());
     setPhrase(p.toUpperCase());
+    setHasGatheredClueInfo(true);
   }
 
   return (
     <div>
-      <InfoGather onChange={onChange} />
-      <WheelOfFortuneWall category={category} phrase={phrase} guessedLetters={[""]} />
+      {
+        !hasGatheredClueInfo ?
+          <InfoGather onSubmit={onInfoGatherSubmit} /> :
+          <GuessingGame category={category} phrase={phrase} />
+      }
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import WheelOfFortuneLetter from './WheelOfFortuneLetter';
 import './WheelOfFortuneWall.css'
+import vanna from './vanna.png'
+import wheelOfFortuneImage from './wheelOfFortune.png'
 
 interface WheelOfFortuneWallProps {
   category: string;
@@ -14,7 +16,6 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
   const NUM_COLS = 14;
 
   const NUM_COLS_PER_LINE = [NUM_COLS - 2, NUM_COLS, NUM_COLS, NUM_COLS - 2];
-  console.log(NUM_COLS_PER_LINE);
 
   // Place the phrase within the wall
   // Rules:
@@ -61,7 +62,6 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
   }
 
   let possibleWordCombinations = getPossibleWordCombinations([[],[],[],[]], 0, wordsInPhrase);
-  console.log(possibleWordCombinations);
 
   const centerLinesVertically = (wordCombination: string[][]) => {
     // Center the lines vertically
@@ -104,7 +104,6 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
       const lineLength = getLengthOnLine(line);
       // Find the starting index for the line
       let thisLineStartingIndex = Math.floor((NUM_COLS - lineLength) / 2);
-      console.log("For the line \"" + line.join(" ") + "\", the starting index is " + thisLineStartingIndex);
       startingIndex = Math.min(startingIndex, thisLineStartingIndex)
     }
 
@@ -160,10 +159,7 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
     return bestWordCombination as string[][];
   };
 
-  // const centeredWordCombinations = possibleWordCombinations.map(centerLines);
-  console.log(possibleWordCombinations[0]);
   const chosenWordCombination = getBestWordCombination(possibleWordCombinations.map(centerLinesHoizontally));
-  console.log(chosenWordCombination);
 
   let wheelOfFortuneTable = [];
   for (let row = 0; row < NUM_ROWS; ++row) {
@@ -171,10 +167,18 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
 
     for (let col = 0; col < NUM_COLS; ++col) {
       const letter = chosenWordCombination[row][col];
-      wheelOfFortuneRow.push(<WheelOfFortuneLetter letter={letter} visible={letter !== null} guessed={true} />);
+      const isDummyLetter = (row === 0 || row === NUM_ROWS - 1) && (col === 0 || col === NUM_COLS - 1);
+      wheelOfFortuneRow.push(
+        <WheelOfFortuneLetter
+          letter={letter}
+          guessed={guessedLetters.indexOf(letter) !== -1}
+          isVisible={!isDummyLetter} />
+      );
     }
     wheelOfFortuneTable.push(
-      <div>
+      <div style={{
+        whiteSpace: 'nowrap'
+      }}>
         {wheelOfFortuneRow}
       </div>
     );
@@ -185,8 +189,14 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
     </div>
   );
   return (
-    <div className="WheelOfFortuneWall">
-      {wheelOfFortuneLetters}
+    <div>
+      <div className="WheelOfFortuneWallOuter">
+        <div className="WheelOfFortuneWallInner" style={{
+          backgroundImage: `url(${wheelOfFortuneImage})`,
+        }}>
+          {wheelOfFortuneLetters}
+        </div>
+      </div>
       <span className="category_display" >{category.toUpperCase()}</span>
       <h3>{guessedLetters}</h3>
     </div>
