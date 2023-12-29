@@ -1,6 +1,7 @@
 import WheelOfFortuneWall from './WheelOfFortuneWall';
 import React from 'react';
 import './GuessingGame.css'
+import { click } from '@testing-library/user-event/dist/click';
 
 interface GuessingGameProps {
   category: string;
@@ -11,6 +12,7 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
   const [lettersToGuess, setLettersToGuess] = React.useState("");
   const [additionalGuessedLetters, setAdditionalGuessedLetters] = React.useState([] as string[]);
   const [hasGuessedAdditionalLetters, setHasGuessedAdditionalLetters] = React.useState(false);
+  const [clickedShowSolution, setClickedShowSolution] = React.useState(false);
   const defaultGuessedLetters = ["R", "S", "T", "L", "N", "E"];
 
   function onGuessedLetterFormSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
@@ -24,9 +26,16 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
       console.log("Failure case, can only have 4");
       return;
     }
+    const isAlpha = function(ch: string) {
+      return /^[A-Za-z]$/.test(ch);
+    }
     if (lettersToGuessArray.filter(isAlpha).length !== 4) {
       console.log("Failure case, must all be letters");
       return;
+    }
+    const isVowel = function(ch: string) {
+      // Wheel of Fortune does not treat Y as a vowel
+      return ch === "A" || ch === "E" || ch === "I" || ch === "O" || ch === "U";
     }
     if (lettersToGuessArray.filter(isVowel).length !== 1) {
       console.log("Failure case, can only use 1 vowel");
@@ -47,22 +56,20 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
     setHasGuessedAdditionalLetters(true);
   }
 
-  const isAlpha = function(ch: string) {
-    return /^[A-Za-z]$/.test(ch);
-  }
-  const isVowel = function(ch: string) {
-    // Wheel of Fortune does not treat Y as a vowel
-    return ch === "A" || ch === "E" || ch === "I" || ch === "O" || ch === "U";
-  }
   function onLettersToGuessChange(e: React.ChangeEvent<HTMLInputElement>) {
     setLettersToGuess(e.target.value.toUpperCase());
   }
 
-  const guessedLetters: string[]= [...defaultGuessedLetters, ...additionalGuessedLetters];
+  function onShowSolutionClick(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    setClickedShowSolution(true);
+  }
+
+  const guessedLetters: string[] = [...defaultGuessedLetters, ...additionalGuessedLetters];
 
   return (
     <div>
-      <WheelOfFortuneWall category={category} phrase={phrase} guessedLetters={guessedLetters} />
+      <WheelOfFortuneWall category={category} phrase={phrase} guessedLetters={guessedLetters} showSolution={clickedShowSolution} />
       {
         !hasGuessedAdditionalLetters ?
           <form onSubmit={onGuessedLetterFormSubmit} style={{
@@ -74,6 +81,7 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
           </form> :
           <span>{lettersToGuess}</span>
       }
+      <button onClick={onShowSolutionClick}>Show Solution</button>
     </div>
   );
 }

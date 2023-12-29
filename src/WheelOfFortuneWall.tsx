@@ -8,10 +8,11 @@ interface WheelOfFortuneWallProps {
   category: string;
   phrase: string;
   guessedLetters: string[];
+  showSolution: boolean;
 }
 
 // Wheel of Fortune wall is a 12/14/14/12 wall of TVs that are each somewhere around a 3:4 aspect ratio
-const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneWallProps>> = ({category, phrase, guessedLetters}) => {
+const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneWallProps>> = ({category, phrase, guessedLetters, showSolution}) => {
   const NUM_ROWS = 4;
   const NUM_COLS = 14;
 
@@ -171,7 +172,7 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
       wheelOfFortuneRow.push(
         <WheelOfFortuneLetter
           letter={letter}
-          guessed={guessedLetters.indexOf(letter) !== -1}
+          guessed={showSolution || guessedLetters.indexOf(letter) !== -1}
           isVisible={!isDummyLetter} />
       );
     }
