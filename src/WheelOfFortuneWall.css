@@ -49,3 +49,18 @@
   box-sizing: border-box;
   width: 50%;
 }
+
+.WebcamView {
+  width: 7em;
+  height: 7em;
+  float: right;
+  margin-top: -5em;
+  padding-right: 4em;
+}
+
+.WebcamView > video {
+  border-radius: 50%;
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}

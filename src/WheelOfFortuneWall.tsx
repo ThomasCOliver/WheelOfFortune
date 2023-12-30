@@ -3,6 +3,7 @@ import WheelOfFortuneLetter from './WheelOfFortuneLetter';
 import './WheelOfFortuneWall.css'
 import wheelOfFortuneImage from './wheelOfFortune.png'
 import useInterval from './useInterval';
+import Webcam from 'react-webcam';
 
 interface WheelOfFortuneWallProps {
   category: string;
@@ -233,6 +234,9 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
           <div className="UIElement">
             <div>
               <div className="CategoryDisplay" >{category.toUpperCase()}</div>
+              <div className="WebcamView">
+                <Webcam />
+              </div>
             </div>
             <div className="GuessedLettersDisplay">
               <div className="DefaultGuessedLettersDisplay">
