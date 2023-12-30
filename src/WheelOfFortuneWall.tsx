@@ -7,7 +7,8 @@ import useInterval from './useInterval';
 interface WheelOfFortuneWallProps {
   category: string;
   phrase: string;
-  guessedLetters: string[];
+  defaultGuessedLetters: string[];
+  additionalGuessedLetters: string[];
   showSolution: boolean;
   onLettersFilled: () => void;
 }
@@ -17,7 +18,7 @@ function clone2DArray<T>(lines: T[][]) {
 }
 
 // Wheel of Fortune wall is a 12/14/14/12 wall of TVs that are each somewhere around a 3:4 aspect ratio
-const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneWallProps>> = ({category, phrase, guessedLetters, showSolution, onLettersFilled}) => {
+const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneWallProps>> = ({category, phrase, defaultGuessedLetters, additionalGuessedLetters, showSolution, onLettersFilled}) => {
   const [statePhrase, setStatePhrase] = React.useState("");
   const [wallLayout, setWallLayout] = React.useState([] as string[][]);
   const [isLetterSolved, setIsLetterSolved] = React.useState([] as boolean[][]);
@@ -31,7 +32,16 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
 
   React.useEffect(() => {
     setIsInProgress(true);
-  }, [guessedLetters])
+  }, [defaultGuessedLetters, additionalGuessedLetters]);
+
+  const isThisLetterGuessed = (ch: string) => {
+    if (defaultGuessedLetters.indexOf(ch) !== -1) {
+      return true;
+    } else if (additionalGuessedLetters.indexOf(ch) !== -1) {
+      return true;
+    }
+    return false;
+  }
 
   if (statePhrase !== phrase) {
     // Place the phrase within the wall
@@ -148,7 +158,7 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
     for (let row = 0; row < wallLayout.length; ++row) {
       for (let col = 0; col < wallLayout[row].length; ++col) {
         const letter = wallLayout[row][col];
-        if (!isLetterSolved[row][col] && guessedLetters.indexOf(letter) !== -1) {
+        if (!isLetterSolved[row][col] && isThisLetterGuessed(letter)) {
           let newIsLetterSolved = clone2DArray(isLetterSolved);
           newIsLetterSolved[row][col] = true
           setIsLetterSolved(newIsLetterSolved);
@@ -169,7 +179,7 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
       let numOfGuessedCharacters = 0;
       for (let row of wallLayout) {
         for (let character of row) {
-          if (guessedLetters.indexOf(character) !== -1) {
+          if (isThisLetterGuessed(character)) {
             ++numOfGuessedCharacters;
           }
         }
@@ -188,12 +198,12 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
     for (let col = 0; col < wallLayout[row].length; ++col) {
       const letter = wallLayout[row][col];
       const isDummyLetter = (row === 0 || row === NUM_ROWS - 1) && (col === 0 || col === NUM_COLS - 1);
-      const isAGuessedLetter = isLetterSolved[row][col];
+      const isASolvedLetter = isLetterSolved[row][col];
       wheelOfFortuneRow.push(
         <WheelOfFortuneLetter
           letter={letter}
           shownSolution={showSolution}
-          guessed={guessedLetters.indexOf(letter) !== -1 && isAGuessedLetter}
+          guessed={isThisLetterGuessed(letter) && isASolvedLetter}
           isVisible={!isDummyLetter}
           onLetterShown={onLetterShown} />
       );
@@ -214,14 +224,27 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
   return (
     <div>
       <div className="WheelOfFortuneWallOuter">
-        <div className="WheelOfFortuneWallInner" style={{
-          backgroundImage: `url(${wheelOfFortuneImage})`,
-        }}>
-          {wheelOfFortuneLetters}
+        <div>
+          <div className="WheelOfFortuneWallInner" style={{
+            backgroundImage: `url(${wheelOfFortuneImage})`,
+          }}>
+            {wheelOfFortuneLetters}
+          </div>
+          <div className="UIElement">
+            <div>
+              <div className="CategoryDisplay" >{category.toUpperCase()}</div>
+            </div>
+            <div className="GuessedLettersDisplay">
+              <div className="DefaultGuessedLettersDisplay">
+                { defaultGuessedLetters.length === 0 ? <span>&nbsp;</span> : defaultGuessedLetters}
+              </div>
+              <div className="AdditionalGuessedLettersDisplay">
+                {additionalGuessedLetters}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <span className="category_display" >{category.toUpperCase()}</span>
-      <h3>{guessedLetters}</h3>
     </div>
   );
 }

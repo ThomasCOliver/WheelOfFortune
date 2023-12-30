@@ -6,7 +6,7 @@ interface InfoGatherProps {
 }
 
 const InfoGather: React.FunctionComponent<React.PropsWithChildren<InfoGatherProps>> = ({onSubmit}) => {
-  const [category, setCategory] = React.useState("");
+  const [category, setCategory] = React.useState("Around the House");
   const [phrase, setPhrase] = React.useState("");
 
   function onInfoGatherSubmit(e: React.FormEvent<HTMLFormElement>) {

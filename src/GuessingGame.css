@@ -1,3 +1,7 @@
+.GuessingGame {
+  background-color: black;
+  height: 100vh;
+}
 
 .letterToGuessInput {
   font-size: 4em;
@@ -12,4 +16,9 @@
   border-bottom-color: black;
   color: black;
   outline: none;
+}
+
+.UIElement {
+  z-index: 1;
+  position: relative;
 }

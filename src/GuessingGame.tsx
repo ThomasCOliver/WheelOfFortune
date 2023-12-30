@@ -70,7 +70,7 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
       return;
     }
     for (const letterToGuess of lettersToGuessArray) {
-      if (guessedLetters.indexOf(letterToGuess) !== -1) {
+      if (defaultGuessedLetters.indexOf(letterToGuess) !== -1) {
         console.log("Failure case, used an already guessed letter");
         return;
       }
@@ -112,24 +112,25 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
     }
   }
 
-  const guessedLetters: string[] = [...defaultGuessedLetters, ...additionalGuessedLetters];
-
   return (
-    <div>
-      <WheelOfFortuneWall category={category} phrase={phrase} guessedLetters={guessedLetters} showSolution={clickedShowSolution} onLettersFilled={onLettersFilled} />
-      {
-        !hasGuessedAdditionalLetters ?
-          <form onSubmit={onGuessedLetterFormSubmit} style={{
-            display: 'flex',
-            alignItems: 'center',
-            flexFlow: 'column'
-          }}>
-            <input className="letterToGuessInput" value={lettersToGuess} onChange={onLettersToGuessChange} maxLength={4} disabled={gamePhase <= PhaseOfGame.RSTLNEGiving || hasGuessedAdditionalLetters}/>
-          </form> :
-          <span>{lettersToGuess}</span>
-      }
-      <button onClick={(e) => onShowSolutionClick(true)}>Show Solution (good)</button>
-      <button onClick={(e) => onShowSolutionClick(false)}>Show Solution (bad)</button>
+    <div className="GuessingGame">
+      <WheelOfFortuneWall category={category} phrase={phrase} defaultGuessedLetters={defaultGuessedLetters} additionalGuessedLetters={additionalGuessedLetters} showSolution={clickedShowSolution} onLettersFilled={onLettersFilled} />
+      <div className="UIElement">
+        {
+          !hasGuessedAdditionalLetters ?
+            <form onSubmit={onGuessedLetterFormSubmit} style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexFlow: 'column'
+            }}>
+              <input className="letterToGuessInput" value={lettersToGuess} onChange={onLettersToGuessChange} maxLength={4} disabled={gamePhase <= PhaseOfGame.RSTLNEGiving || hasGuessedAdditionalLetters}/>
+            </form> :
+            <div>
+              <button onClick={(e) => onShowSolutionClick(true)}>Show Solution (good)</button>
+              <button onClick={(e) => onShowSolutionClick(false)}>Show Solution (bad)</button>
+            </div>
+        }
+      </div>
     </div>
   );
 }
