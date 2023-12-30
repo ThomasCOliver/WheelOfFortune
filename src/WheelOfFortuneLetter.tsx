@@ -9,25 +9,22 @@ interface WheelOfFortuneLetterProps {
   letter: string;
   guessed: boolean;
   isVisible: boolean;
+  onLetterShown: () => void;
 }
 
 // Wheel of Fortune wall is a 12/14/14/12 wall of TVs that are each somewhere around a 3:4 aspect ratio
-const WheelOfFortuneLetter: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneLetterProps>> = ({letter, guessed, isVisible}) => {
+const WheelOfFortuneLetter: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneLetterProps>> = ({letter, guessed, isVisible, onLetterShown}) => {
   let [wasGuessed, setWasGuessed] = React.useState(false);
   let [isBlue, setIsBlue] = React.useState(false);
-  let [playLetterDingSound, {stop: stopLetterDingSound}] = useSound(letterDingSound);
+  let [playLetterDingSound] = useSound(letterDingSound);
   useTimeout(() => {
     setIsBlue(false);
+    onLetterShown();
   }, isBlue ? 1000 : null);
 
   if (wasGuessed !== guessed) {
     setWasGuessed(true);
     setIsBlue(true);
-    playLetterDingSound();
-    console.log("Played the ding!");
-  }
-
-  function play() {
     playLetterDingSound();
   }
 
@@ -38,7 +35,7 @@ const WheelOfFortuneLetter: React.FunctionComponent<React.PropsWithChildren<Whee
     );
   }
   return (
-    <div className="WheelOfFortuneLetterOuter" onClick={() => playLetterDingSound()}>
+    <div className="WheelOfFortuneLetterOuter">
       <div className={`WheelOfFortuneLetterInner ${isBlue ? "blue" : ""}`}>
         {
           letter !== null ?

@@ -14,10 +14,10 @@ interface GuessingGameProps {
 
 const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGameProps>> = ({category, phrase}) => {
   const [lettersToGuess, setLettersToGuess] = React.useState("");
-  const [additionalGuessedLetters, setAdditionalGuessedLetters] = React.useState([] as string[]);
   const [hasGuessedAdditionalLetters, setHasGuessedAdditionalLetters] = React.useState(false);
   const [clickedShowSolution, setClickedShowSolution] = React.useState(false);
   const [defaultGuessedLetters, setDefaultGuessedLetters] = React.useState([] as string[]);
+  const [additionalGuessedLetters, setAdditionalGuessedLetters] = React.useState([] as string[]);
   const [playRstlneSound, {stop: stopRstlneSound}] = useSound(rstlneSound, {
     loop: true
   });
@@ -84,7 +84,7 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
   }
 
   function onLettersFilled() {
-
+    console.log("Letters filled!");
   }
 
   const guessedLetters: string[] = [...defaultGuessedLetters, ...additionalGuessedLetters];

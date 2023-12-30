@@ -1,10 +1,8 @@
 import React from 'react';
 import WheelOfFortuneLetter from './WheelOfFortuneLetter';
 import './WheelOfFortuneWall.css'
-import vanna from './vanna.png'
 import wheelOfFortuneImage from './wheelOfFortune.png'
 import useInterval from './useInterval';
-import useTimeout from './useTimeout';
 
 interface WheelOfFortuneWallProps {
   category: string;
@@ -20,16 +18,20 @@ function clone2DArray<T>(lines: T[][]) {
 
 // Wheel of Fortune wall is a 12/14/14/12 wall of TVs that are each somewhere around a 3:4 aspect ratio
 const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneWallProps>> = ({category, phrase, guessedLetters, showSolution, onLettersFilled}) => {
-  let [statePhrase, setStatePhrase] = React.useState("");
-  let [wallLayout, setWallLayout] = React.useState([] as string[][]);
-  let [stateGuessedLetters, setStateGuessedLetters] = React.useState([] as string[]);
-  let [wallBlue, setWallBlue] = React.useState([] as boolean[][]);
-  let [isLetterSolved, setIsLetterSolved] = React.useState([] as boolean[][]);
+  const [statePhrase, setStatePhrase] = React.useState("");
+  const [wallLayout, setWallLayout] = React.useState([] as string[][]);
+  const [isLetterSolved, setIsLetterSolved] = React.useState([] as boolean[][]);
+  const [numLettersShown, setNumLettersShown] = React.useState(0);
+  const [isInProgress, setIsInProgress] = React.useState(false);
 
   const NUM_ROWS = 4;
   const NUM_COLS = 14;
 
   const NUM_COLS_PER_LINE = [NUM_COLS - 2, NUM_COLS, NUM_COLS, NUM_COLS - 2];
+
+  React.useEffect(() => {
+    setIsInProgress(true);
+  }, [guessedLetters])
 
   if (statePhrase !== phrase) {
     // Place the phrase within the wall
@@ -139,7 +141,6 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
     setStatePhrase(phrase);
     setWallLayout(chosenWordCombination);
     setIsLetterSolved(Array(NUM_ROWS).fill(null).map(() => Array(NUM_COLS).fill(false)));
-    setWallBlue(Array(NUM_ROWS).fill(null).map(() => Array(NUM_COLS).fill(false)));
   }
 
 
@@ -147,7 +148,7 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
     for (let row = 0; row < wallLayout.length; ++row) {
       for (let col = 0; col < wallLayout[row].length; ++col) {
         const letter = wallLayout[row][col];
-        if (!isLetterSolved[row][col] && stateGuessedLetters.indexOf(letter) !== -1) {
+        if (!isLetterSolved[row][col] && guessedLetters.indexOf(letter) !== -1) {
           let newIsLetterSolved = clone2DArray(isLetterSolved);
           newIsLetterSolved[row][col] = true
           setIsLetterSolved(newIsLetterSolved);
@@ -159,10 +160,25 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
 
   useInterval(findFirstUnsolvedLetter, 1000);
 
-  if (stateGuessedLetters !== guessedLetters) {
-    // Need to find the first guessed letter that isn't marked as solved, mark it as to be solved,
-    // and then continue to the next one after a timeout.
-    setStateGuessedLetters(guessedLetters);
+  const onLetterShown = () => {
+    const newNumLettersShown = numLettersShown + 1;
+    console.log(newNumLettersShown);
+    setNumLettersShown(newNumLettersShown);
+    if (wallLayout.length !== 0 && isInProgress) {
+      // We have a layout, check if updates are done
+      let numOfGuessedCharacters = 0;
+      for (let row of wallLayout) {
+        for (let character of row) {
+          if (guessedLetters.indexOf(character) !== -1) {
+            ++numOfGuessedCharacters;
+          }
+        }
+      }
+      if (newNumLettersShown === numOfGuessedCharacters) {
+        setIsInProgress(false);
+        onLettersFilled();
+      }
+    }
   }
 
   let wheelOfFortuneTable = [];
@@ -171,17 +187,14 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
 
     for (let col = 0; col < wallLayout[row].length; ++col) {
       const letter = wallLayout[row][col];
-      console.log("wallLayout");
-      console.log(wallLayout);
-      console.log("isLetterSolved");
-      console.log(isLetterSolved);
       const isDummyLetter = (row === 0 || row === NUM_ROWS - 1) && (col === 0 || col === NUM_COLS - 1);
       const isAGuessedLetter = isLetterSolved[row][col];
       wheelOfFortuneRow.push(
         <WheelOfFortuneLetter
           letter={letter}
           guessed={showSolution || (guessedLetters.indexOf(letter) !== -1 && isAGuessedLetter)}
-          isVisible={!isDummyLetter} />
+          isVisible={!isDummyLetter}
+          onLetterShown={onLetterShown} />
       );
     }
     wheelOfFortuneTable.push(
