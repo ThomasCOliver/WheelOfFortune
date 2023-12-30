@@ -1,7 +1,11 @@
 import WheelOfFortuneWall from './WheelOfFortuneWall';
-import React from 'react';
+import React, { useEffect } from 'react';
 import './GuessingGame.css'
-import { click } from '@testing-library/user-event/dist/click';
+import useSound from 'use-sound';
+import rstlneSound from "./sounds/rstlne.mp3";
+import countdownSound from "./sounds/countdown.mp3";
+import buzzerSound from "./sounds/buzzer.mp3";
+import useTimeout from './useTimeout';
 
 interface GuessingGameProps {
   category: string;
@@ -13,7 +17,20 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
   const [additionalGuessedLetters, setAdditionalGuessedLetters] = React.useState([] as string[]);
   const [hasGuessedAdditionalLetters, setHasGuessedAdditionalLetters] = React.useState(false);
   const [clickedShowSolution, setClickedShowSolution] = React.useState(false);
-  const defaultGuessedLetters = ["R", "S", "T", "L", "N", "E"];
+  const [defaultGuessedLetters, setDefaultGuessedLetters] = React.useState([] as string[]);
+  const [playRstlneSound, {stop: stopRstlneSound}] = useSound(rstlneSound, {
+    loop: true
+  });
+  const [playCountdownSound, {stop: stopCountdownSound}] = useSound(countdownSound);
+  const [playBuzzerSound] = useSound(buzzerSound);
+
+  useEffect(() => {
+    // playRstlneSound();
+  });
+
+  useTimeout(() => {
+    setDefaultGuessedLetters(["R", "S", "T", "L", "N", "E"]);
+  }, 1000);
 
   function onGuessedLetterFormSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -54,6 +71,7 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
     }
     setAdditionalGuessedLetters([...lettersToGuessArray])
     setHasGuessedAdditionalLetters(true);
+    stopRstlneSound();
   }
 
   function onLettersToGuessChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -65,11 +83,15 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
     setClickedShowSolution(true);
   }
 
+  function onLettersFilled() {
+
+  }
+
   const guessedLetters: string[] = [...defaultGuessedLetters, ...additionalGuessedLetters];
 
   return (
     <div>
-      <WheelOfFortuneWall category={category} phrase={phrase} guessedLetters={guessedLetters} showSolution={clickedShowSolution} />
+      <WheelOfFortuneWall category={category} phrase={phrase} guessedLetters={guessedLetters} showSolution={clickedShowSolution} onLettersFilled={onLettersFilled} />
       {
         !hasGuessedAdditionalLetters ?
           <form onSubmit={onGuessedLetterFormSubmit} style={{
