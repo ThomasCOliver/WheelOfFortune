@@ -1,5 +1,5 @@
 import WheelOfFortuneWall from './WheelOfFortuneWall';
-import React, { useEffect } from 'react';
+import React from 'react';
 import './GuessingGame.css'
 import useSound from 'use-sound';
 import rstlneSound from "./sounds/rstlne.mp3";
