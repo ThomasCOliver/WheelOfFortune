@@ -1,7 +1,7 @@
 import React from 'react';
 import WheelOfFortuneLetter from './WheelOfFortuneLetter';
 import './WheelOfFortuneWall.css'
-import wheelOfFortuneImage from './wheelOfFortune.png'
+import wheelOfFortuneImage from './images/wheelOfFortune.png'
 import useInterval from './useInterval';
 import Webcam from 'react-webcam';
 

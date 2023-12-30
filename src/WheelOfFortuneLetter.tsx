@@ -1,6 +1,6 @@
 import React from 'react';
 import './WheelOfFortuneLetter.css';
-import unusedBackground from './unused_background.png'
+import unusedBackground from './images/unused_background.png'
 import useSound from 'use-sound';
 import letterDingSound from './sounds/letter_ding.mp3'
 import useTimeout from './useTimeout';

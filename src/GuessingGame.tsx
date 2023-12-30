@@ -7,13 +7,16 @@ import countdownSound from "./sounds/countdown.mp3";
 import additionalLettersSound from "./sounds/additional_letters.mp3";
 import successSound from "./sounds/success_music.mp3";
 import useTimeout from './useTimeout';
+import launchVideo from './videos/wof_season_32_starting_theme.mp4'
 
 interface GuessingGameProps {
   category: string;
   phrase: string;
+  skipIntro: boolean;
 }
 
 enum PhaseOfGame {
+  LaunchVideo,
   Pregame,
   RSTLNEGiving,
   WaitingForAdditionalLetters,
@@ -21,13 +24,14 @@ enum PhaseOfGame {
   Finished
 }
 
-const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGameProps>> = ({category, phrase}) => {
+const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGameProps>> = ({category, phrase, skipIntro}) => {
   const [lettersToGuess, setLettersToGuess] = React.useState("");
   const [hasGuessedAdditionalLetters, setHasGuessedAdditionalLetters] = React.useState(false);
   const [clickedShowSolution, setClickedShowSolution] = React.useState(false);
   const [defaultGuessedLetters, setDefaultGuessedLetters] = React.useState([] as string[]);
   const [additionalGuessedLetters, setAdditionalGuessedLetters] = React.useState([] as string[]);
-  const [gamePhase, setGamePhase] = React.useState(PhaseOfGame.Pregame as PhaseOfGame);
+  const [gamePhase, setGamePhase] = React.useState(!skipIntro ? PhaseOfGame.LaunchVideo : PhaseOfGame.Pregame);
+  const [rstlneDelayTiming, setRstlneDelayTiming] = React.useState(!skipIntro ? null : 1000);
   const [playRstlneSound, {stop: stopRstlneSound}] = useSound(rstlneSound, {
     loop: true
   });
@@ -41,7 +45,7 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
     setDefaultGuessedLetters(["R", "S", "T", "L", "N", "E"]);
     setGamePhase(PhaseOfGame.RSTLNEGiving);
     playRstlneSound();
-  }, 1000);
+  }, rstlneDelayTiming);
 
   function onGuessedLetterFormSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -110,6 +114,21 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
       stopAdditionalLettersSound();
       playCountdownSound();
     }
+  }
+
+  const [countdownToStartingGame, setCountdownToStartingGame] = React.useState(null as null | number);
+  useTimeout(() => {
+    setGamePhase(PhaseOfGame.Pregame);
+    setRstlneDelayTiming(1000);
+  }, countdownToStartingGame);
+  if (gamePhase === PhaseOfGame.LaunchVideo) {
+    return (
+      <video
+        className='FullScreenVideo'
+        src={launchVideo}
+        onClick={(e) => (e.target as HTMLVideoElement).play()}
+        onEnded={(_) => setCountdownToStartingGame(1000)} />
+    )
   }
 
   return (

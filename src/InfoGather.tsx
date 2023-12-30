@@ -2,16 +2,17 @@ import React from 'react';
 import './App.css';
 
 interface InfoGatherProps {
-  onSubmit: (cat: string, phrase: string) => void;
+  onSubmit: (cat: string, phrase: string, skipIntro: boolean) => void;
 }
 
 const InfoGather: React.FunctionComponent<React.PropsWithChildren<InfoGatherProps>> = ({onSubmit}) => {
   const [category, setCategory] = React.useState("Around the House");
   const [phrase, setPhrase] = React.useState("");
+  const [skipIntro, setSkipIntro] = React.useState(true);
 
   function onInfoGatherSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    onSubmit(category, phrase);
+    onSubmit(category, phrase, skipIntro);
   }
 
   const listOfCategories = [
@@ -63,6 +64,8 @@ const InfoGather: React.FunctionComponent<React.PropsWithChildren<InfoGatherProp
       </select>
       <h2>Phrase</h2>
       <input type="text" id="phrase" name="phrase" value={phrase} onChange={e => setPhrase(e.target.value)}/>
+      <input type="checkbox" id="skipIntro" name="skipIntro" checked={skipIntro} onClick={_ => setSkipIntro(!skipIntro)} />
+      <label htmlFor="skipIntro">Skip intro</label><br></br>
       <button type='submit'>Submit</button>
     </form>
   );
