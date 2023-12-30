@@ -192,7 +192,8 @@ const WheelOfFortuneWall: React.FunctionComponent<React.PropsWithChildren<WheelO
       wheelOfFortuneRow.push(
         <WheelOfFortuneLetter
           letter={letter}
-          guessed={showSolution || (guessedLetters.indexOf(letter) !== -1 && isAGuessedLetter)}
+          shownSolution={showSolution}
+          guessed={guessedLetters.indexOf(letter) !== -1 && isAGuessedLetter}
           isVisible={!isDummyLetter}
           onLetterShown={onLetterShown} />
       );

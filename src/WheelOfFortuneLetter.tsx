@@ -7,13 +7,14 @@ import useTimeout from './useTimeout';
 
 interface WheelOfFortuneLetterProps {
   letter: string;
+  shownSolution: boolean;
   guessed: boolean;
   isVisible: boolean;
   onLetterShown: () => void;
 }
 
 // Wheel of Fortune wall is a 12/14/14/12 wall of TVs that are each somewhere around a 3:4 aspect ratio
-const WheelOfFortuneLetter: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneLetterProps>> = ({letter, guessed, isVisible, onLetterShown}) => {
+const WheelOfFortuneLetter: React.FunctionComponent<React.PropsWithChildren<WheelOfFortuneLetterProps>> = ({letter, shownSolution, guessed, isVisible, onLetterShown}) => {
   let [wasGuessed, setWasGuessed] = React.useState(false);
   let [isBlue, setIsBlue] = React.useState(false);
   let [playLetterDingSound] = useSound(letterDingSound);
@@ -39,7 +40,7 @@ const WheelOfFortuneLetter: React.FunctionComponent<React.PropsWithChildren<Whee
       <div className={`WheelOfFortuneLetterInner ${isBlue ? "blue" : ""}`}>
         {
           letter !== null ?
-            <span>{isBlue ? " " : (guessed ? letter : " ")}</span> :
+            <span>{isBlue ? " " : (guessed || shownSolution ? letter : " ")}</span> :
             <img src={unusedBackground} alt="" />
         }
       </div>

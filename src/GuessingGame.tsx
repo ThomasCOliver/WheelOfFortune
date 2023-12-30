@@ -4,12 +4,21 @@ import './GuessingGame.css'
 import useSound from 'use-sound';
 import rstlneSound from "./sounds/rstlne.mp3";
 import countdownSound from "./sounds/countdown.mp3";
-import buzzerSound from "./sounds/buzzer.mp3";
+import additionalLettersSound from "./sounds/additional_letters.mp3";
+import successSound from "./sounds/success_music.mp3";
 import useTimeout from './useTimeout';
 
 interface GuessingGameProps {
   category: string;
   phrase: string;
+}
+
+enum PhaseOfGame {
+  Pregame,
+  RSTLNEGiving,
+  WaitingForAdditionalLetters,
+  FinalGuess,
+  Finished
 }
 
 const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGameProps>> = ({category, phrase}) => {
@@ -18,18 +27,20 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
   const [clickedShowSolution, setClickedShowSolution] = React.useState(false);
   const [defaultGuessedLetters, setDefaultGuessedLetters] = React.useState([] as string[]);
   const [additionalGuessedLetters, setAdditionalGuessedLetters] = React.useState([] as string[]);
+  const [gamePhase, setGamePhase] = React.useState(PhaseOfGame.Pregame as PhaseOfGame);
   const [playRstlneSound, {stop: stopRstlneSound}] = useSound(rstlneSound, {
     loop: true
   });
-  const [playCountdownSound, {stop: stopCountdownSound}] = useSound(countdownSound);
-  const [playBuzzerSound] = useSound(buzzerSound);
-
-  useEffect(() => {
-    // playRstlneSound();
+  const [playAdditionalLettersSound, {stop: stopAdditionalLettersSound}] = useSound(additionalLettersSound, {
+    loop: true
   });
+  const [playCountdownSound, {stop: stopCountdownSound}] = useSound(countdownSound);
+  const [playSuccessSound] = useSound(successSound);
 
   useTimeout(() => {
     setDefaultGuessedLetters(["R", "S", "T", "L", "N", "E"]);
+    setGamePhase(PhaseOfGame.RSTLNEGiving);
+    playRstlneSound();
   }, 1000);
 
   function onGuessedLetterFormSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
@@ -78,13 +89,27 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
     setLettersToGuess(e.target.value.toUpperCase());
   }
 
-  function onShowSolutionClick(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
+  function onShowSolutionClick(success: boolean) {
     setClickedShowSolution(true);
+    setGamePhase(PhaseOfGame.Finished);
+    stopRstlneSound();
+    stopCountdownSound();
+    stopAdditionalLettersSound();
+    if (success) {
+      playSuccessSound();
+    }
   }
 
   function onLettersFilled() {
-    console.log("Letters filled!");
+    if (gamePhase === PhaseOfGame.RSTLNEGiving) {
+      stopRstlneSound();
+      setGamePhase(PhaseOfGame.WaitingForAdditionalLetters);
+      playAdditionalLettersSound();
+    } else if (gamePhase === PhaseOfGame.WaitingForAdditionalLetters) {
+      setGamePhase(PhaseOfGame.FinalGuess);
+      stopAdditionalLettersSound();
+      playCountdownSound();
+    }
   }
 
   const guessedLetters: string[] = [...defaultGuessedLetters, ...additionalGuessedLetters];
@@ -99,11 +124,12 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
             alignItems: 'center',
             flexFlow: 'column'
           }}>
-            <input className="letterToGuessInput" value={lettersToGuess} onChange={onLettersToGuessChange} maxLength={4} />
+            <input className="letterToGuessInput" value={lettersToGuess} onChange={onLettersToGuessChange} maxLength={4} disabled={gamePhase <= PhaseOfGame.RSTLNEGiving || hasGuessedAdditionalLetters}/>
           </form> :
           <span>{lettersToGuess}</span>
       }
-      <button onClick={onShowSolutionClick}>Show Solution</button>
+      <button onClick={(e) => onShowSolutionClick(true)}>Show Solution (good)</button>
+      <button onClick={(e) => onShowSolutionClick(false)}>Show Solution (bad)</button>
     </div>
   );
 }
