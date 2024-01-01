@@ -27,12 +27,14 @@
   border-bottom: solid 0.1em white;
   padding-left: 2em;
   padding-right: 1em;
+  font-weight: 600;
 }
 
 .GuessedLettersDisplay {
   color: white;
   font-size: 2em;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.5em;
+  font-weight: 700;
 }
 
 .GuessedLettersDisplay > .DefaultGuessedLettersDisplay {

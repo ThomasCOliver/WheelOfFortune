@@ -134,7 +134,7 @@ const GuessingGame: React.FunctionComponent<React.PropsWithChildren<GuessingGame
   return (
     <div className="GuessingGame">
       <WheelOfFortuneWall category={category} phrase={phrase} defaultGuessedLetters={defaultGuessedLetters} additionalGuessedLetters={additionalGuessedLetters} showSolution={clickedShowSolution} onLettersFilled={onLettersFilled} />
-      <div className="UIElement">
+      <div className="GuessingGameUI UIElement">
         {
           !hasGuessedAdditionalLetters ?
             <form onSubmit={onGuessedLetterFormSubmit} style={{

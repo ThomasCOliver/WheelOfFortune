@@ -34,9 +34,9 @@
 
 .WheelOfFortuneLetterInner > span {
   display: inline-block;
-  font-family: 'Cairo';
-  font-size: 2.5em;
-  line-height: 1.4em;
+  font-family: 'helveticablack_condensed';
+  font-size: 3.5em;
+  line-height: 1em;
   vertical-align: middle;
 }
 

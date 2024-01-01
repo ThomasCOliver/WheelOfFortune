@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import './stylesheet.css'
 import InfoGather from './InfoGather';
 import GuessingGame from './GuessingGame'
 
